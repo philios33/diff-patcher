@@ -1,6 +1,6 @@
-# diff-patcher
+# deep-diff-patcher
 
-**diff-patcher** is a node.js module which provides utility functions to both compare the differences between two objects and apply the generated patch somewhere.  The main reason this was written was to help compress state changes on the server side so that only the deltas/patches are sent across the wire and are applied properly to the client state at the other end.
+**deep-diff-patcher** is a node.js module which provides utility functions to both compare the differences between two objects and apply the generated patch somewhere.  The main reason this was written was to help compress state changes on the server side so that only the deltas/patches are sent across the wire and are applied properly to the client state at the other end.
 
 In this library, a patch refers to a JSON object that defines an array of operations that you need to apply to the origin object to reach the target object.  It is similar to other implementations out there but not the same.  I have tried to keep the patch payload as small as possible.
 
@@ -23,14 +23,14 @@ Recursion is almost always a memory hog and should really be considered an antip
 ## Install
 
 ```bash
-npm install diff-patcher
+npm install deep-diff-patcher
 ```
 
 ## Example
 
 ```javascript
 
-import { compare } from 'diff-patcher';
+import { compare } from 'deep-diff-patcher';
 
 let origin = {
     one: 1,
