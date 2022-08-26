@@ -1,5 +1,12 @@
 // Never use recursion
 
+import { serializeObject, unserializeObject } from "./serializer";
+
+// Note: A patch represents the changes in data between serialized data structures
+// This means we need to always serialize the incoming object first to a clean incase it contains dates.
+// But this means we would need a serializer and unserializer that mutates the object rather than reduces.
+
+
 // Execute all the patch updates on this object by mutating it.
 export function patchObject (obj, patch: Array<any>) {
 
@@ -12,6 +19,9 @@ export function patchObject (obj, patch: Array<any>) {
     if (!(patch instanceof Array)) {
         throw new Error("Second argument must be an Array");
     }
+
+    // First serialize the starting object by mutating it
+    serializeObject(obj, true);
 
     patch.forEach(update => {
         if (!(update.p instanceof Array)) {
@@ -57,11 +67,18 @@ export function patchObject (obj, patch: Array<any>) {
             }
             current[keyName].splice(update.i, update.r, ...theValues);
         }
-    })
+    });
+
+    // Finally unserialize it back now that we are done patching
+    unserializeObject(obj, true);
 }
 
 // Returns a new state object which is patched.  Does not mutate the original state.
-export function reduceState (state, patch) {
+export function reduceState (unserializedState, patch) {
+
+    // We must serialize before performing the patch
+    const state = serializeObject(unserializedState, false);
+
     let oldState = state;
     patch.forEach(update => {
 
@@ -149,6 +166,7 @@ export function reduceState (state, patch) {
         }
         oldState = newState;
     });
-    return oldState;
+
+    return unserializeObject(oldState, false);
 }
 

@@ -15,6 +15,8 @@ A patch can be applied to an object so that it changes the original (mutates it)
 * Full array comparison works out if items have been removed, inserted or deleted as efficiently as possible.
 * Focus on avoiding patch bloat if objects are too dissimillar.
 * Unit tests using jest.
+* The special javascript Date object is automatically serialized and unserialized.
+* Note: Other special data types are not supported yet: Symbol, Undefined, BigInt
 
 ### Note about recursion
 

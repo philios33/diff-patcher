@@ -1,4 +1,5 @@
 import { compareArrays, getValueAtPath } from "./array";
+import { serializeObject } from "./serializer";
 
 // Get all paths in A and specifically remember whether they are primatives or point to another object.  Order them by size in to a single array to check.
 // For each path in A, find it in B, check its type matches, if its a primative check its value matches (otherwise its a change)
@@ -29,14 +30,18 @@ const UNSET = 'unset';
 */
 
 // Get all paths in an object which exist
-export default function compare(a, b) {
-    if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) {
+export default function compare(aObj, bObj) {
+    if (typeof aObj !== 'object' || typeof bObj !== 'object' || aObj === null || bObj === null) {
         throw new Error("Can only compare two objects");
     }
 
     let changes = [];
 
     let queue = [];
+
+    // When comparing, we never mutate the original, but we must compare the serialized objects.
+    const a = serializeObject(aObj, false);
+    const b = serializeObject(bObj, false);
 
     // Add the root object "a" with an empty path array
     queue.push({
@@ -227,4 +232,3 @@ export default function compare(a, b) {
 
     return changes;
 }
-
