@@ -1,6 +1,6 @@
 {
   "name": "deep-diff-patcher",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Compare the differences between two objects and apply the patch",
   "repository": {
     "type": "git",

@@ -41,7 +41,7 @@ export function patchObject (obj, patch: Array<any>) {
                 if (typeof current[next] === 'object') {
                     current = current[next];
                 } else {
-                    throw new Error("Key " + next + " is not an object at: " + update.p.join("."));
+                    throw new Error("Key " + next + " is not an object at: " + update.p.join(".") + " found " + typeof current[next]);
                 }
             } else {
                 throw new Error("Not found key " + next + " when searching for: " + update.p.join("."));
