@@ -258,4 +258,23 @@ describe('Test serializer with unserializer', () => {
         const afterStr = JSON.stringify(a);
         expect(afterStr).toStrictEqual(beforeStr);
     });
+
+    test('Serialize without mutating, and unserialize with mutating provides a seperate deep clone', () => {
+        const a = {
+            my: "primative",
+            obj: {
+                test: 1,
+            },
+            please: 6,
+        }
+        const sa = serializeObject(a, false);
+        unserializeObject(sa, true);
+        expect(sa).toStrictEqual(a);
+        sa.please = 5;
+        sa.obj.test = 2;
+        expect(sa.please).toStrictEqual(5);
+        expect(sa.obj.test).toStrictEqual(2);
+        expect(a.please).toStrictEqual(6);
+        expect(a.obj.test).toStrictEqual(1);
+    });
 })
