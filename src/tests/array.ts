@@ -1,5 +1,6 @@
 
 import { isEqualTo, getValueAtPath, getObjectSimilarity, getObjectLeafPaths, compareArrayReferences, compareArrays } from '../array';
+import { patchObject, reduceState } from '../patcher';
 
 describe('Equality function isEqualTo', () => {
     test("Disregards object key order", () => {
@@ -509,4 +510,29 @@ describe('Function compareArrays', () => {
         expect(compareArrays(a, b, 100)).toStrictEqual(expected);
     });
 
+});
+
+describe('Basic duplicates handling', () => {
+    test('Detect simple case', () => {
+        let a = ["A", "A", "B"];
+        let b = ["A", "B", "A"];
+        let expected = {
+            arrayUpdates: [{
+                // Remove the B, so the two As are next to each other
+                t: 'p',
+                i: 1,
+                r: 1,
+            },{
+                // Then append the B afterwards
+                t: 'p',
+                i: 2,
+                r: 0,
+                v: ["A"],
+            }],
+            appliedArray: ["A", "B", "A"],
+        }
+        expect(compareArrays(a, b, 100)).toStrictEqual(expected);
+    });
+
+    
 });

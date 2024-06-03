@@ -1,5 +1,6 @@
 
 import compare from '../comparer';
+import { patchObject, reduceState } from '../patcher';
 
 const TYPE = 't';
 
@@ -726,5 +727,55 @@ describe('Object comparer', () => {
         }
         let expected = [change1];
         expect(diffs).toStrictEqual(expected);
+    });
+
+    test('Detects 3 objects reducing to 1 object', () => {
+        let a = {
+            all: [
+                {
+                    phil: {
+                        score: 30
+                    }
+                },{
+                    phil: {
+                        score: 20
+                    }
+                },{
+                    phil: {
+                        score: 10
+                    }
+                }
+            ]
+        };
+        let b = {
+            all: [{
+                phil: {
+                    score: 10
+                }
+            }]
+        };
+        let diffs = compare(a,b);
+        // console.log(diffs);
+
+        // Apply that to the original
+        const c = reduceState(a, diffs);
+
+        expect(c).toStrictEqual(b);
+
+        /*
+        let change1 = {};
+        change1[TYPE] = UNSET;
+        change1[PATH] = ['2'];
+        let change2 = {};
+        change2[TYPE] = UNSET;
+        change2[PATH] = ['1'];
+        let change3 = {};
+        change3[TYPE] = SET;
+        change3[PATH] = ['phil', 'score'];
+        change3[VALUE] = 30;
+        let expected = [change1, change2, change3];
+
+        expect(diffs).toStrictEqual(expected);
+        */
     });
 });

@@ -233,6 +233,24 @@ export function compareArrays (oldArray: Array<any>, newArray: Array<any>, thres
 
     // Do the magic here with the huristics we decided from before.
     let isSimilarEnough = false;
+    if (typeof oldArray !== "object") {
+        throw new Error("Expecting oldArray to be an object but found: " + typeof oldArray);
+    }
+    if (typeof newArray !== "object") {
+        throw new Error("Expecting newArray to be an object but found: " + typeof newArray);
+    }
+    if (oldArray === null) {
+        throw new Error("oldArray is null");
+    }
+    if (newArray === null) {
+        throw new Error("newArray is null");
+    }
+    if (!(oldArray instanceof Array)) {
+        throw new Error("Expecting oldArray to be an array, but it wasnt");
+    }
+    if (!(newArray instanceof Array)) {
+        throw new Error("Expecting newArray to be an array, but it wasnt");
+    }
     let appliedArray = oldArray.slice();
     
     while(!isSimilarEnough) {
@@ -290,8 +308,30 @@ export function compareArrays (oldArray: Array<any>, newArray: Array<any>, thres
                     update[REMOVE] = mostCommonOffset;
                     arrayUpdates.push(update);
                 } else {
-                    let items = newArray.slice(incorrectIndex, -mostCommonOffset);
+                    // let items = newArray.slice(incorrectIndex, -mostCommonOffset);
                     // console.log("Cant think how this can ever happen??? At index", incorrectIndex, "inserting", -mostCommonOffset, "items", items);
+                    // This happens quite often when duplicate items exist in an array
+                    // I am just copying the below code, because it should work in the same way
+                    // New item, count how many new items there are beyond this one
+                    let toAdd = 1;
+                    for(let i=incorrectIndex+1; i<refsList.length; i++) {
+                        let nextRefs = refsList[i];
+                        if (nextRefs.length === 0) {
+                            toAdd++;
+                        } else {
+                            break;
+                        }
+                    }
+                    let items = newArray.slice(incorrectIndex, incorrectIndex + toAdd);
+                    // console.log("At index", incorrectIndex, "inserting", toAdd, "items", items);
+                    appliedArray.splice(incorrectIndex, 0, ...items);
+                    let update = {};
+                    update[TYPE] = SPLICE;
+                    update[INDEX] = incorrectIndex;
+                    update[REMOVE] = 0;
+                    update[VALUES] = items;
+                    arrayUpdates.push(update);
+
                 }
             } else {
                 // New item, count how many new items there are beyond this one
